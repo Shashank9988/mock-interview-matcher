@@ -81,7 +81,7 @@ func registerUser(c *gin.Context) {
 
 func sendEmail(to string, meetLink string) {
 	from := "robertlewan1998@gmail.com"
-	password := "@67@sHILLONG"
+	password := "@68@sHILLONG"
 
 	smtpHost := "smtp.gmail.com"
 	smtpPort := "587"
