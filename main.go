@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/mailgun/mailgun-go"
 	"gorm.io/driver/postgres"
 
-	"github.com/mailgun/mailgun-go/v4"
 	"gorm.io/gorm"
 )
 
