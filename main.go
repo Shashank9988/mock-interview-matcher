@@ -1,12 +1,10 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mailgun/mailgun-go"
@@ -99,11 +97,11 @@ func sendEmail(to string, meetLink string) {
 	message := mg.NewMessage(sender, subject, body, recipient)
 
 	// Set a timeout context
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
-	defer cancel()
+	// ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	// defer cancel()
 
 	// Send the email
-	_, _, err := mg.Send(ctx, message)
+	_, _, err := mg.Send(message)
 	if err != nil {
 
 	}
