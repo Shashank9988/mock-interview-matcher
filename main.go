@@ -1,13 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/mailgun/mailgun-go"
 	"gorm.io/driver/postgres"
 
 	"gorm.io/gorm"
@@ -81,32 +79,32 @@ func registerUser(c *gin.Context) {
 }
 
 func sendEmail(to string, meetLink string) {
-	domain := "mock.interview.com" // e.g., "sandbox123.mailgun.org"
-	apiKey := "75d948e91a529329d6f2f93617411118-3d4b3a2a-ddac9672"
+	// domain := "mock.interview.com" // e.g., "sandbox123.mailgun.org"
+	// apiKey := "75d948e91a529329d6f2f93617411118-3d4b3a2a-ddac9672"
 
-	// Sender & recipient details
-	sender := "Mock Interview <mock.interview.com>" // Must be from your verified domain
-	recipient := to                                 // Change to the actual recipient email
-	subject := "Mock Interview Scheduled!"
-	body := "Your mock interview has been scheduled. Check your Google Meet link!"
+	// // Sender & recipient details
+	// sender := "Mock Interview <mock.interview.com>" // Must be from your verified domain
+	// recipient := to                                 // Change to the actual recipient email
+	// subject := "Mock Interview Scheduled!"
+	// body := "Your mock interview has been scheduled. Check your Google Meet link!"
 
-	// Initialize Mailgun client
-	mg := mailgun.NewMailgun(domain, apiKey)
+	// // Initialize Mailgun client
+	// mg := mailgun.NewMailgun(domain, apiKey)
 
-	// Create a message
-	message := mg.NewMessage(sender, subject, body, recipient)
+	// // Create a message
+	// message := mg.NewMessage(sender, subject, body, recipient)
 
-	// Set a timeout context
-	// ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
-	// defer cancel()
+	// // Set a timeout context
+	// // ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	// // defer cancel()
 
-	// Send the email
-	_, _, err := mg.Send(message)
-	if err != nil {
+	// // Send the email
+	// _, _, err := mg.Send(message)
+	// if err != nil {
 
-	}
+	// }
 
-	fmt.Println("Email sent successfully!")
+	// fmt.Println("Email sent successfully!")
 }
 
 func main() {
