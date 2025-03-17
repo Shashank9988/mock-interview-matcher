@@ -1,13 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/resendlabs/resend-go"
 	"gorm.io/driver/postgres"
-
 	"gorm.io/gorm"
 )
 
@@ -79,32 +80,25 @@ func registerUser(c *gin.Context) {
 }
 
 func sendEmail(to string, meetLink string) {
-	// domain := "mock.interview.com" // e.g., "sandbox123.mailgun.org"
-	// apiKey := "75d948e91a529329d6f2f93617411118-3d4b3a2a-ddac9672"
+	apiKey := "re_9ZgeUBtA_EvRqt3SDipSvtXcMWBJpuatc"
 
-	// // Sender & recipient details
-	// sender := "Mock Interview <mock.interview.com>" // Must be from your verified domain
-	// recipient := to                                 // Change to the actual recipient email
-	// subject := "Mock Interview Scheduled!"
-	// body := "Your mock interview has been scheduled. Check your Google Meet link!"
+	client := resend.NewClient(apiKey)
 
-	// // Initialize Mailgun client
-	// mg := mailgun.NewMailgun(domain, apiKey)
+	params := &resend.SendEmailRequest{
+		From:    "Mock Interview <your-email@yourdomain.com>", // Must be a verified email/domain
+		To:      []string{to},                                 // Change to actual recipient's email
+		Subject: "Mock Interview Scheduled!",
+		Text:    "Your mock interview has been scheduled. Check your Google Meet link!",
+	}
 
-	// // Create a message
-	// message := mg.NewMessage(sender, subject, body, recipient)
+	// Send the email
+	email, err := client.Emails.Send(params)
+	if err != nil {
 
-	// // Set a timeout context
-	// // ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
-	// // defer cancel()
+	}
 
-	// // Send the email
-	// _, _, err := mg.Send(message)
-	// if err != nil {
+	fmt.Printf("Email sent successfully! Email ID: %s\n", email.Id)
 
-	// }
-
-	// fmt.Println("Email sent successfully!")
 }
 
 func main() {
