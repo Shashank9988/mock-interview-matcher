@@ -85,8 +85,8 @@ func sendEmail(to string, meetLink string) {
 	client := resend.NewClient(apiKey)
 
 	params := &resend.SendEmailRequest{
-		From:    "Mock Interview <your-email@yourdomain.com>", // Must be a verified email/domain
-		To:      []string{to},                                 // Change to actual recipient's email
+		From:    "onboarding@resend.dev", // Must be a verified email/domain
+		To:      []string{to},            // Change to actual recipient's email
 		Subject: "Mock Interview Scheduled!",
 		Text:    "Your mock interview has been scheduled. Check your Google Meet link!",
 	}
