@@ -13,15 +13,17 @@ import (
 )
 
 type User struct {
-	ID     uint   `gorm:"primaryKey"`
-	Email  string `gorm:"unique"`
-	Status string // "waiting" or "matched"
+	ID       uint   `gorm:"primaryKey"`
+	Email    string `gorm:"unique"`
+	TimeSlot string // New field to store the selected time slot
+	Status   string // "waiting" or "matched"
 }
 
 type Match struct {
 	ID       uint `gorm:"primaryKey"`
 	User1    string
 	User2    string
+	TimeSlot string // Ensure users are matched by time slot
 	MeetLink string
 }
 
@@ -40,8 +42,14 @@ func initDB() {
 
 func registerUser(c *gin.Context) {
 	email := c.PostForm("email")
+	timeSlot := c.PostForm("time_slot") // Get the time slot from the form data
 
-	// Check if user already exists
+	if email == "" || timeSlot == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Email and time_slot are required"})
+		return
+	}
+
+	// Check if user already exists with the same time slot
 	var existingUser User
 	db.Where("email = ?", email).First(&existingUser)
 	if existingUser.ID != 0 {
@@ -50,24 +58,24 @@ func registerUser(c *gin.Context) {
 	}
 
 	// Register new user
-	newUser := User{Email: email, Status: "waiting"}
+	newUser := User{Email: email, TimeSlot: timeSlot, Status: "waiting"}
 	db.Create(&newUser)
 
-	// Check for matching users
+	// Check for a matching user in the same time slot
 	var waitingUser User
-	db.Where("status = ?", "waiting").Not("email = ?", email).First(&waitingUser)
+	db.Where("status = ? AND time_slot = ?", "waiting", timeSlot).Not("email = ?", email).First(&waitingUser)
 
 	if waitingUser.ID != 0 {
 		// Match found, create Google Meet link
-		meetLink := "https://meet.google.com/random-meeting-id"
+		meetLink := "https://meet.google.com/mpk-erqa-kqd"
 
 		// Save match
-		match := Match{User1: waitingUser.Email, User2: email, MeetLink: meetLink}
+		match := Match{User1: waitingUser.Email, User2: email, TimeSlot: timeSlot, MeetLink: meetLink}
 		db.Create(&match)
 
-		// Update statuses
-		db.Model(&waitingUser).Update("status", "matched")
-		db.Model(&newUser).Update("status", "matched")
+		// Delete both users entry
+		db.Delete(&waitingUser)
+		db.Delete(&newUser)
 
 		// Send emails
 		sendEmail(waitingUser.Email, meetLink)
@@ -85,20 +93,20 @@ func sendEmail(to string, meetLink string) {
 	client := resend.NewClient(apiKey)
 
 	params := &resend.SendEmailRequest{
-		From:    "onboarding@resend.dev", // Must be a verified email/domain
-		To:      []string{to},            // Change to actual recipient's email
+		From:    "mock.interview.com", // Must be a verified email/domain
+		To:      []string{to},
 		Subject: "Mock Interview Scheduled!",
-		Text:    "Your mock interview has been scheduled. Check your Google Meet link!",
+		Text:    fmt.Sprintf("Your mock interview is scheduled at your selected time slot. Join using this link: %s", meetLink),
 	}
 
 	// Send the email
 	email, err := client.Emails.Send(params)
 	if err != nil {
-
+		log.Println("Failed to send email:", err)
+		return
 	}
 
 	fmt.Printf("Email sent successfully! Email ID: %s\n", email.Id)
-
 }
 
 func main() {
