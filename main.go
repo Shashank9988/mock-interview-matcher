@@ -10,6 +10,7 @@ import (
 	"github.com/resendlabs/resend-go"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"github.com/gin-contrib/cors"
 )
 
 type User struct {
@@ -113,6 +114,8 @@ func main() {
 	initDB()
 
 	r := gin.Default()
+	r.Use(cors.Default()) // Allows all origins
+
 	r.POST("/register", registerUser)
 
 	port := os.Getenv("PORT")
